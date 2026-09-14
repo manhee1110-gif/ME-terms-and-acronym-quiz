@@ -1,4 +1,4 @@
-import {lessons, defaultLessonId, getLesson} from './lessons.mjs?v=8';
+import {lessons, defaultLessonId, getLesson} from './lessons.mjs?v=9';
 
 export {lessons, defaultLessonId};
 

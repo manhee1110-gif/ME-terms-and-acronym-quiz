@@ -11,7 +11,20 @@ export function normalizeDictation(text) {
   return value.replace(/[‐‑‒–—-]/g, ' ').replace(/[^a-z0-9]/g, '');
 }
 
+function normalizeWithoutArticles(text) {
+  return String(text).toLowerCase()
+    .replace(/[‐‑‒–—-]/g, ' ')
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim().split(/\s+/)
+    .filter(word => word && !['a', 'an', 'the'].includes(word))
+    .join('');
+}
+
 export function isAcceptedDictation(input, expected, alternatives = []) {
   const received = normalizeDictation(input);
-  return [expected, ...alternatives].some(candidate => normalizeDictation(candidate) === received);
+  const receivedWithoutArticles = normalizeWithoutArticles(input);
+  return [expected, ...alternatives].some(candidate =>
+    normalizeDictation(candidate) === received ||
+    normalizeWithoutArticles(candidate) === receivedWithoutArticles
+  );
 }

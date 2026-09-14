@@ -15,6 +15,8 @@ Lesson 1 follows the finalized lecture slides and worksheet in three stages:
 - **Classroom game:** Three fictional NPC encounters, 24 context-based questions, retry hints, and a mission-complete ending.
 - **Individual Comms Lab:** 16 browser-spoken activities combining dictation, code/number decoding, and one-sentence report writing.
 
+Dictation accepts capitalization, punctuation, hyphen, and article variants while preserving core spelling. Repeated attempts progressively reveal the listening focus, answer structure, and model answer. Writing prompts hide the target term until staged feedback is needed.
+
 The live scene uses a lightweight canvas layer for parallax movement, diagonal character staging, entrances, speaking motion, answer reactions, confetti, and transitions. It needs no backend or API key.
 
 ## Add future lessons

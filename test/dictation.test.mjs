@@ -30,3 +30,9 @@ test('accepts decoded phonetic, time, and DTG answers',()=>{
 test('accepts military numerical hyphen variants',()=>{
   assert.equal(normalizeDictation('NIN-ER ZE-RO'),normalizeDictation('niner zero'));
 });
+
+test('accepts harmless article differences but keeps core spelling strict',()=>{
+  const expected='The headquarters will conduct a command post exercise.';
+  assert.equal(isAcceptedDictation('Headquarters will conduct the command post exercise',expected),true);
+  assert.equal(isAcceptedDictation('Headquarters will conduct a command pose exercise',expected),false);
+});

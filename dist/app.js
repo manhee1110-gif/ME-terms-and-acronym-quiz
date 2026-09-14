@@ -1,10 +1,10 @@
 import {
   lessons, defaultLessonId, freshState, currentLesson, chaptersFor, questionsFor,
   drillsFor, current, choose, advance, completionTime, endingLabel
-} from './game.mjs?v=8';
-import {MotionScene} from './motion.mjs?v=8';
-import {Typewriter} from './typewriter.mjs?v=8';
-import {isAcceptedDictation, normalizeDictation} from './dictation.mjs?v=8';
+} from './game.mjs?v=9';
+import {MotionScene} from './motion.mjs?v=9';
+import {Typewriter} from './typewriter.mjs?v=9';
+import {isAcceptedDictation, normalizeDictation} from './dictation.mjs?v=9';
 
 const initialUrl = new URL(location.href);
 const requestedLesson = lessons.find(item => item.id === initialUrl.searchParams.get('lesson') && item.available);
@@ -21,7 +21,7 @@ function freshIndividual() {
   return {
     index: 0, stage: 'dictation', dictation: '', dictationAttempts: 0,
     dictationResult: null, showDictation: false, writing: '',
-    writingResult: null, finished: false, audioMessage: ''
+    writingAttempts: 0, writingResult: null, finished: false, audioMessage: ''
   };
 }
 individual = freshIndividual();
@@ -385,7 +385,8 @@ function dictationGuidance(drill) {
   const caught = drill.keyPhrases.filter(phrase => phraseWasHeard(phrase, individual.dictation));
   const common = drill.commonMistakes?.find(item => item.pattern.test(individual.dictation));
   const caughtLine = caught.length ? `잡은 표현: ${caught.map(escape).join(' · ')}` : drill.decode ? '코드워드를 한 묶음씩 다시 확인해 봐요.' : '이번에는 문장 뼈대부터 다시 잡아 봐요.';
-  return `<p>${caughtLine}</p>${common ? `<p class="specific-correction"><b>바로잡기.</b> ${escape(common.message)}</p>` : ''}<div class="listen-scaffold"><span>다시 들을 곳</span><p>${escape(drill.listenFocus)}</p><code>${escape(drill.frame)}</code></div>`;
+  const frame = individual.dictationAttempts >= 2 ? `<code>${escape(drill.frame)}</code>` : '';
+  return `<p>${caughtLine}</p>${common ? `<p class="specific-correction"><b>바로잡기.</b> ${escape(common.message)}</p>` : ''}<div class="listen-scaffold"><span>${individual.dictationAttempts >= 2 ? '2단계 힌트 · 구조 보기' : '1단계 힌트 · 다시 들을 곳'}</span><p>${escape(drill.listenFocus)}</p>${frame}</div>`;
 }
 
 function speak(text) {
@@ -415,7 +416,8 @@ function dictationFeedback(drill) {
     return `<div class="solo-feedback correct"><b>TRANSMISSION RECEIVED</b><p>${drill.decode ? '좋아. 무전 내용을 정확히 해독했어.' : '좋아. 문장이 정확히 들렸어.'}</p><div class="model-answer"><span>${drill.decode ? '해독 결과' : '정답 문장'}</span>${escape(answer)}${transmission}</div><button id="to-writing" class="primary-button" type="button">이제 문장 답변 쓰기${iconArrow}</button></div>`;
   }
   if (individual.dictationResult === 'wrong') {
-    return `<div class="solo-feedback wrong"><b>CHECK THE COMMS</b><p>${drill.decode ? '아직 해독 결과가 맞지는 않아. 하이픈·문장부호·대소문자는 표기 차이로 처리하니, 코드워드의 문자와 숫자를 다시 확인해 봐.' : '아직 문장 전체가 맞지는 않아. 하이픈·문장부호·대소문자는 표기 차이로 처리하니, 그 외에 들린 단어를 다시 확인해 봐.'}</p>${dictationGuidance(drill)}${individual.dictationAttempts > 1 ? `<button id="show-dictation" class="secondary-button" type="button">정답 + 끊어 읽기 보기</button>${individual.showDictation ? `<div class="model-answer"><span>${drill.decode ? '해독 결과' : '정답 문장'}</span>${escape(answer)}${transmission}<span>끊어 읽기</span>${escape(drill.frame.replaceAll('___', '…'))}</div>` : ''}` : ''}</div>`;
+    const reveal = individual.dictationAttempts >= 3 ? `<div class="model-answer"><span>3단계 힌트 · ${drill.decode ? '해독 결과' : '정답 문장'}</span>${escape(answer)}${transmission}<span>끊어 읽기</span>${escape(drill.frame.replaceAll('___', '…'))}</div><button id="continue-after-reveal" class="primary-button" type="button">정답 확인 후 문장 훈련${iconArrow}</button>` : '';
+    return `<div class="solo-feedback wrong"><b>CHECK THE COMMS · ${individual.dictationAttempts}/3</b><p>${drill.decode ? '아직 해독 결과가 맞지는 않아. 하이픈·문장부호·대소문자는 표기 차이로 처리하니, 코드워드의 문자와 숫자를 다시 확인해 봐.' : '핵심 철자는 유지하지만 대소문자·하이픈·문장부호와 a/an/the 차이는 정답으로 처리해. 들린 핵심어를 다시 확인해 봐.'}</p>${dictationGuidance(drill)}${reveal}</div>`;
   }
   return '';
 }
@@ -426,7 +428,13 @@ function writingFeedback(drill) {
   if (individual.writingResult.correct) {
     return `<div class="solo-feedback correct"><b>MESSAGE SENT</b><p>핵심 정보가 들어간 문장이야.</p><div class="model-answer"><span>예시 답안</span>${escape(drill.model)}</div><button id="next-drill" class="primary-button" type="button">${individual.index === drills.length - 1 ? '개별 훈련 종료' : '다음 표현'}${iconArrow}</button></div>`;
   }
-  return `<div class="solo-feedback wrong"><b>MESSAGE NEEDS WORK</b><p>${escape(individual.writingResult.message)}</p><div class="model-answer"><span>예시 답안</span>${escape(drill.model)}</div></div>`;
+  const step = Math.min(individual.writingAttempts, 3);
+  const clue = step === 1
+    ? `<div class="listen-scaffold"><span>1단계 힌트 · 기능 찾기</span><p>${escape(drill.writeHint || '상황이 요구하는 군사용어 또는 정확한 송신 형식을 먼저 떠올려 보세요.')}</p></div>`
+    : step === 2
+      ? `<div class="listen-scaffold"><span>2단계 힌트 · 핵심정보</span><p>${drill.required.map(item => `<b>${escape(item)}</b>`).join(' · ')}</p></div>`
+      : `<div class="model-answer"><span>3단계 힌트 · 예시 답안</span>${escape(drill.model)}</div>`;
+  return `<div class="solo-feedback wrong"><b>MESSAGE NEEDS WORK · ${step}/3</b><p>${escape(individual.writingResult.message)}</p>${clue}</div>`;
 }
 
 function renderSolo() {
@@ -449,7 +457,7 @@ function renderSolo() {
   game.innerHTML = `<section class="solo-layout">
     <div class="solo-cinema"><canvas class="motion-canvas" data-motion-scene aria-hidden="true"></canvas><div class="solo-hud"><button id="lesson-select" class="back-button" type="button">← 차시 선택</button><span>LESSON ${String(lesson.number).padStart(2, '0')} · PERSONAL COMMS LAB</span><b>${String(individual.index + 1).padStart(2, '0')} / ${String(drills.length).padStart(2, '0')}</b></div><div class="solo-term">${escape(drill.term)}</div></div>
     <div class="solo-workspace"><header class="solo-header"><span class="eyebrow">${dictation ? (drill.decode ? 'LISTEN · DECODE' : 'LISTEN · DICTATE') : 'WRITE · REPORT'}</span><h1>${dictation ? (drill.dictationTitle || '듣고, 한 문장을 받아쓰세요.') : '상황에 맞게 한 문장으로 답하세요.'}</h1><p>${dictation ? (drill.dictationInstruction || '소리를 원하는 만큼 반복해서 듣고, 문장 전체를 입력해요.') : '정답 하나를 외우는 문제가 아니라, 핵심 정보가 들어간 짧은 보고 문장을 만드는 연습이에요.'}</p></header>
-      ${dictation ? `<section class="solo-card"><button id="listen" class="listen-button" type="button"><span aria-hidden="true">▶</span> 0.8× 속도로 듣기</button><p class="listen-note">${individual.audioMessage || '영어 음성은 이 기기의 브라우저가 읽어 줍니다.'}</p><form id="dictation-form"><label for="dictation">${escape(drill.inputLabel || '들린 문장')}</label><input id="dictation" autocomplete="off" autocapitalize="none" spellcheck="false" value="${escape(individual.dictation)}" placeholder="${escape(drill.placeholder || 'Type the whole sentence…')}" aria-describedby="dictation-help"><small id="dictation-help">${escape(drill.inputHelp || '하이픈, 쉼표, 마침표와 대소문자는 신경 쓰지 않아도 돼요.')}</small><button class="primary-button" type="submit">${drill.decode ? '해독 확인' : '받아쓰기 확인'}${iconArrow}</button></form>${dictationFeedback(drill)}</section>` : `<section class="solo-card writing-card"><div class="writing-situation"><span>SITUATION</span><p>${escape(drill.write)}</p></div><form id="writing-form"><label for="writing">나의 보고 문장</label><textarea id="writing" rows="4" spellcheck="true" placeholder="Write one clear sentence in English.">${escape(individual.writing)}</textarea><div class="required-words"><span>문장에 포함할 정보</span>${drill.required.map(item => `<b>${escape(item)}</b>`).join('')}</div><button class="primary-button" type="submit">문장 점검${iconArrow}</button></form>${writingFeedback(drill)}</section>`}
+      ${dictation ? `<section class="solo-card"><button id="listen" class="listen-button" type="button"><span aria-hidden="true">▶</span> 0.8× 속도로 듣기</button><p class="listen-note">${individual.audioMessage || '영어 음성은 이 기기의 브라우저가 읽어 줍니다.'}</p><form id="dictation-form"><label for="dictation">${escape(drill.inputLabel || '들린 문장')}</label><input id="dictation" autocomplete="off" autocapitalize="none" spellcheck="false" value="${escape(individual.dictation)}" placeholder="${escape(drill.placeholder || 'Type the whole sentence…')}" aria-describedby="dictation-help"><small id="dictation-help">${escape(drill.inputHelp || '대소문자, 하이픈, 문장부호와 a/an/the 차이는 채점하지 않아요.')}</small><button class="primary-button" type="submit">${drill.decode ? '해독 확인' : '받아쓰기 확인'}${iconArrow}</button></form>${dictationFeedback(drill)}</section>` : `<section class="solo-card writing-card"><div class="writing-situation"><span>SITUATION</span><p>${escape(drill.write)}</p></div><form id="writing-form"><label for="writing">나의 보고 문장</label><textarea id="writing" rows="4" spellcheck="true" placeholder="Write one clear sentence in English.">${escape(individual.writing)}</textarea><small>정답 용어는 처음에는 보이지 않아요. 막히면 오답 횟수에 따라 힌트가 열립니다.</small><button class="primary-button" type="submit">문장 점검${iconArrow}</button></form>${writingFeedback(drill)}</section>`}
     </div>
   </section>`;
   mountScene({mode: 'encounter', chapter: drill.chapter, entering: true});
@@ -466,17 +474,21 @@ function renderSolo() {
       renderSolo();
     });
     document.querySelector('#show-dictation')?.addEventListener('click', () => { individual.showDictation = true; renderSolo(); });
+    document.querySelector('#continue-after-reveal')?.addEventListener('click', () => { individual.stage = 'writing'; renderSolo(); });
     document.querySelector('#to-writing')?.addEventListener('click', () => { individual.stage = 'writing'; renderSolo(); });
   } else {
     document.querySelector('#writing').addEventListener('input', event => { individual.writing = event.target.value; });
     document.querySelector('#writing-form').addEventListener('submit', event => {
       event.preventDefault();
+      individual.writingAttempts++;
       const answer = individual.writing.trim();
       const normalizedAnswer = normalizeDictation(answer);
       const missing = drill.required.filter(item => !normalizedAnswer.includes(normalizeDictation(item)));
       const enoughWords = answer.split(/\s+/).filter(Boolean).length >= (drill.minWords ?? 3);
       individual.writingResult = missing.length || !enoughWords
-        ? {correct: false, message: missing.length ? `문장에 ${missing.join(', ')}을(를) 넣어 보세요.` : '짧은 단어 나열보다, 3단어 이상 한 문장으로 써 보세요.'}
+        ? {correct: false, message: missing.length
+          ? (individual.writingAttempts === 1 ? '상황에 맞는 핵심 군사용어나 송신 형식이 아직 빠졌어요.' : `문장에 ${missing.join(', ')}을(를) 넣어 보세요.`)
+          : `짧은 단어 나열보다, ${drill.minWords ?? 3}단어 이상 한 문장으로 써 보세요.`}
         : {correct: true};
       sound(individual.writingResult.correct ? 'correct' : 'wrong');
       renderSolo();
