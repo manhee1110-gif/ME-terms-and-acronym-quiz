@@ -66,6 +66,11 @@
 .solo-feedback p{font-size:.94rem;line-height:1.6;margin:8px 0 11px}
 .solo-feedback.correct b{color:#277256}
 .solo-feedback.wrong b{color:#b24d44}
+.specific-correction{border-left:4px solid #d36a4e;background:#fff0dc;color:#713d35;padding:10px 12px}
+.listen-scaffold{border:2px solid #9bb8aa;background:#edf4e7;padding:12px 14px;margin:13px 0 15px}
+.listen-scaffold span{display:block;font-size:.74rem;letter-spacing:.12em;font-weight:900;color:#477664}
+.listen-scaffold p{margin:5px 0 9px}
+.listen-scaffold code{display:block;border-left:3px solid #7cc4af;background:#fffdf4;padding:9px 10px;color:#244e48;font:700 .88rem/1.6 monospace;overflow-wrap:anywhere}
 .model-answer{border-left:4px solid #7cc4af;background:#e7f0df;color:#31544e;padding:12px 14px;font-family:monospace;font-size:.9rem;line-height:1.65;margin:12px 0 16px;overflow-wrap:anywhere}
 .model-answer span{display:block;font-family:OfficeSans,'Noto Sans KR',sans-serif;font-weight:700;font-size:.76rem;color:#6d8176;margin-bottom:5px}
 .writing-situation{border-left:4px solid #f1b957;background:#fff2d3;padding:12px 15px;margin-bottom:20px}
@@ -90,4 +95,53 @@
  .solo-card{padding:20px 16px;box-shadow:4px 4px #a5bdb6}
  .solo-card form .primary-button{width:100%}
  .travel-caption{top:17px}
+}
+
+/* Lesson hub: one stable game shell, with lesson data added over time. */
+.mission-select{height:auto;min-height:720px;background-position:50% 56%}
+.mission-select:after{background:linear-gradient(180deg,#10232cc7 0%,#142a30a8 42%,#0b1a22ed 100%)}
+.mission-select .start-content{padding:34px 30px 32px}
+.mission-select .day-tag{margin-bottom:11px;font-size:.75rem}
+.mission-select .game-title{font-size:clamp(2.7rem,5vw,4.45rem);line-height:1.14}
+.mission-select .title-en{margin:9px 0 12px;font-size:.78rem}
+.mission-select .start-tagline{margin-bottom:20px;font-size:.96rem}
+.lesson-grid{position:relative;z-index:9;width:100%;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;text-align:left}
+.lesson-card{min-height:218px;padding:17px 17px 15px;border:3px solid #1b3038;box-shadow:5px 5px #07151d99;background:#fff4d9f2;color:var(--ink);display:flex;flex-direction:column;backdrop-filter:blur(2px)}
+.lesson-card.available{border-color:#ffc865;box-shadow:5px 5px #07151d99,0 0 0 1px #fff0b7}
+.lesson-card.locked{background:#142831eb;color:#b9c9c8;border-color:#597079;box-shadow:4px 4px #07151d88}
+.lesson-card-top{display:flex;justify-content:space-between;align-items:center;gap:10px;font:700 .69rem monospace;letter-spacing:.1em;color:#4e746b}
+.lesson-card-top b{padding:3px 6px;border:1px solid currentColor;color:#26705a;font-size:.64rem}
+.lesson-card.locked .lesson-card-top{color:#94a9ad}.lesson-card.locked .lesson-card-top b{color:#c19e5e}
+.lesson-card h2{font-size:1.08rem;line-height:1.4;letter-spacing:-.035em;margin:14px 0 7px}
+.lesson-card p{font-size:.78rem;line-height:1.55;margin:0;color:#60736f}
+.lesson-card.locked p{color:#91a4a6}
+.lesson-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:auto;padding-top:15px}
+.lesson-play,.lesson-solo{border:2px solid #243740;padding:9px 7px;font-size:.78rem;font-weight:900;line-height:1.35}
+.lesson-play{background:var(--gold);color:#1d3337;box-shadow:2px 2px #0f1c27}
+.lesson-play:hover{background:#ffda85;transform:translate(-1px,-1px)}
+.lesson-solo{background:#315a59;color:#f7f0d7;box-shadow:2px 2px #0f1c27}
+.lesson-solo:hover{background:#477a6d;transform:translate(-1px,-1px)}
+.lesson-pending{margin-top:auto;padding-top:18px;font-size:.72rem;letter-spacing:.06em;color:#c4a561}
+.mission-select .start-guide{margin:20px 0 0;padding:7px 12px;background:#10242bd1;color:#d8e4df;max-width:720px}
+.talk-indicator{right:16%;top:42%}
+
+@media(max-width:950px){
+ .mission-select{min-height:870px}
+ .lesson-grid{grid-template-columns:repeat(2,minmax(0,1fr));max-width:720px}
+ .lesson-card{min-height:202px}
+}
+
+@media(max-width:650px){
+ .mission-select{min-height:1110px}
+ .mission-select .start-content{padding:31px 13px 25px}
+ .mission-select .game-title{font-size:2.6rem}
+ .mission-select .title-en{font-size:.7rem;letter-spacing:.12em}
+ .mission-select .start-tagline{font-size:.86rem;line-height:1.55}
+ .lesson-grid{grid-template-columns:1fr;max-width:360px;gap:10px}
+ .lesson-card{min-height:0;padding:14px 15px}
+ .lesson-card h2{margin:10px 0 5px;font-size:1rem}
+ .lesson-actions{padding-top:11px}
+ .lesson-pending{padding-top:12px}
+ .mission-select .start-guide{font-size:.76rem;margin-top:14px}
+ .talk-indicator{right:14%;top:39%}
 }

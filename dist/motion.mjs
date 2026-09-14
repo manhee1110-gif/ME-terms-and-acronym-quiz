@@ -153,10 +153,12 @@ export class MotionScene {
       const stride = this.reduced ? 0 : step * 4;
       this.drawFrame(this.assets.player, 1, 1, 0, 0, x + stride, h * -.11 + bob, h * .93);
     } else {
-      let npcX = w * (w < 550 ? .76 : .72) + this.camera.x * 8;
+      // Pokemon-style diagonal staging: the learner is a large foreground
+      // silhouette at lower left, and the speaker is smaller at upper right.
+      let npcX = w * (this.mode === 'start' ? .86 : w < 550 ? .78 : .80) + this.camera.x * 8;
       if (this.entering) npcX += (1 - ease(elapsed / 750)) * w * .45;
-      let npcHeight = this.mode === 'start' ? h * .64 : h * 1.03;
-      let npcY = this.mode === 'start' ? h * .45 : h * .05;
+      let npcHeight = this.mode === 'start' ? h * .48 : h * .60;
+      let npcY = this.mode === 'start' ? h * .12 : h * .02;
       if (!this.reduced) npcY += Math.sin(now / 850) * 2;
       if (this.mood === 'talk' && !this.reduced) {
         npcY += Math.sin(now / 95) * 1.7;
@@ -171,9 +173,10 @@ export class MotionScene {
         this.drawFrame(this.assets.player, 1, 1, 0, 0, w * (.1 + p * .85) + step * 4, h * .1 + Math.abs(step) * 5, h * .86);
       } else {
         const breathing = this.reduced ? 0 : Math.sin(now / 1000 + 1) * 2;
-        const playerX = this.mode === 'start' ? w * .20 : w * (w < 650 ? .31 : .35);
-        const playerY = this.mode === 'start' ? h * -.08 : h * -.055;
-        this.drawFrame(this.assets.player, 1, 1, 0, 0, playerX - this.camera.x * 7, playerY + breathing, h * 1.04, this.mode === 'start' ? .75 : 1);
+        const playerX = this.mode === 'start' ? w * .11 : w * (w < 650 ? .20 : .23);
+        const playerY = this.mode === 'start' ? h * .38 : h * .22;
+        const playerHeight = this.mode === 'start' ? h * .68 : h * .86;
+        this.drawFrame(this.assets.player, 1, 1, 0, 0, playerX - this.camera.x * 7, playerY + breathing, playerHeight, this.mode === 'start' ? .62 : 1);
       }
       if (this.mood === 'happy' && moodElapsed < 1400 && !this.reduced) {
         const p = moodElapsed / 1400;

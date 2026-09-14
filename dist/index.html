@@ -4,31 +4,31 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#19272f">
-  <title>퇴근하겠습니다! — Military English</title>
-  <meta name="description" content="군사용어를 해독하며 미군 사무실을 통과하세요. 강의실 게임과 개인 듣기·쓰기 훈련을 제공합니다.">
-  <link rel="stylesheet" href="./style.css">
-  <script type="module" src="./app.js"></script>
+  <title>임무 수행하겠습니다! — Military English Mission</title>
+  <meta name="description" content="차시별 군사용어를 상황 속에서 연습하세요. 강의실 퀴즈 게임과 개인 듣기·쓰기 훈련을 제공합니다.">
+  <link rel="stylesheet" href="./style.css?v=8">
+  <script type="module" src="./app.js?v=8"></script>
 </head>
 <body>
   <div class="page-shell">
     <header class="masthead">
-      <a class="wordmark" href="./" aria-label="게임 시작 화면">퇴근하겠습니다<span>!</span></a>
-      <span class="edition">MILITARY ENGLISH · DAY 01</span>
+      <a class="wordmark" href="./" aria-label="차시 선택 화면">임무 수행하겠습니다<span>!</span></a>
+      <span class="edition">MILITARY ENGLISH · MISSION SELECT</span>
       <div class="utilities">
         <button id="sound" class="utility-button" type="button" aria-pressed="false">♪ 소리 켜기</button>
         <button id="fullscreen" class="utility-button" type="button">전체 화면</button>
       </div>
     </header>
-    <main id="game" class="game-frame" aria-label="군사용어 퇴근 게임"></main>
+    <main id="game" class="game-frame" aria-label="차시별 군사용어 학습 게임"></main>
     <footer class="game-footer">
-      <span>1차시 · 훈련 준비하는 날</span>
+      <span id="footer-lesson">차시를 선택해 학습 임무를 시작하세요</span>
       <span class="key-hint"><kbd>1</kbd>–<kbd>4</kbd> 선택 <span class="divider">/</span> <kbd>Enter</kbd> 다음</span>
       <button id="notebook-open" class="text-button" type="button">단어 수첩 <span aria-hidden="true">↗</span></button>
     </footer>
   </div>
   <dialog id="notebook" aria-labelledby="notebook-title">
     <div class="notebook-top"><div><span class="eyebrow">FIELD NOTES</span><h2 id="notebook-title">오늘의 단어 수첩</h2></div><button id="notebook-close" class="utility-button" type="button">닫기 ×</button></div>
-    <p class="notebook-intro">막히면 잠깐 확인해도 괜찮아요. 오늘 만날 16개 표현입니다.</p>
+    <p class="notebook-intro">선택한 차시의 핵심 표현입니다. 막히면 잠깐 확인해도 괜찮아요.</p>
     <div id="notebook-list"></div>
   </dialog>
   <noscript>게임을 실행하려면 브라우저에서 JavaScript를 켜주세요.</noscript>
