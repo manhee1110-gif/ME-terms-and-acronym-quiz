@@ -1,10 +1,10 @@
 import {
   lessons, defaultLessonId, freshState, currentLesson, chaptersFor, questionsFor,
   drillsFor, current, choose, advance, completionTime, endingLabel
-} from './game.mjs?v=11';
-import {MotionScene} from './motion.mjs?v=11';
-import {Typewriter} from './typewriter.mjs?v=11';
-import {isAcceptedDictation, normalizeDictation} from './dictation.mjs?v=11';
+} from './game.mjs?v=13';
+import {MotionScene} from './motion.mjs?v=13';
+import {Typewriter} from './typewriter.mjs?v=13';
+import {isAcceptedDictation, normalizeDictation} from './dictation.mjs?v=13';
 
 const initialUrl = new URL(location.href);
 const requestedLesson = lessons.find(item => item.id === initialUrl.searchParams.get('lesson') && item.available);

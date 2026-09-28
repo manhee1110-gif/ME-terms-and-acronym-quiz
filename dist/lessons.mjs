@@ -1,4 +1,4 @@
-import {lessonTwo, lessonThree, lessonFour} from './lessons-2-4.mjs?v=11';
+import {lessonTwo, lessonThree, lessonFour} from './lessons-2-4.mjs?v=13';
 
 // Add future lessons here. A new lesson needs one data object and
 // available:true; the shared game screens will render it automatically.
@@ -322,7 +322,8 @@ const numberDrills = [
 const lessonOne = {
   id: 'lesson-1', number: 1, available: true,
   titleKo: '군사약어·음성기호·숫자발음', titleEn: 'TERMS · PHONETICS · NUMBERS',
-  description: '최종 1차시 교안 · 강의실 24문항 · 개별훈련 16개',
+  description: '24문항 문제은행에서 매회 15문항 랜덤 도전 · 개별훈련 16개',
+  classroomQuestionLimit: 15,
   footer: '1차시 · Terms, Phonetics & Numbers',
   chapters, questions, drills: [...termsDrills, ...codeDrills, ...numberDrills],
   sourceNote: '최종 강의 슬라이드 「Military Terms and Abbreviations (1)」과 1차시 학습지를 기준으로 구성했습니다. 상황과 등장인물은 학습용 가상 설정입니다.'

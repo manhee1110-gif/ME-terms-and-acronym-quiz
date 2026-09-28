@@ -17,17 +17,18 @@ function choices(items, index, field) {
 
 function makeQuestions(items, chapter, prefix) {
   return items.map((entry, index) => {
-    const field = index % 2 ? 'meaning' : 'full';
+    const sameLabel = entry.term.toLowerCase().replace(/[^a-z0-9]/g, '') === entry.full.toLowerCase().replace(/[^a-z0-9]/g, '');
+    const field = sameLabel || index % 2 ? 'meaning' : 'full';
     const {options, correct} = choices(items, index, field);
     const ask = field === 'full'
       ? `${entry.term}과 연결되는 정확한 영어 표현 또는 표준 약어는?`
       : `${entry.term}의 의미로 가장 알맞은 것은?`;
-    const detail = entry.description || `${entry.term}은(는) ${entry.full}을(를) 뜻한다.`;
+    const detail = entry.description || `The latest staff message includes ${entry.term}. Confirm the correct definition before we continue.`;
     return {
       id: `${prefix}-${String(index + 1).padStart(2, '0')}`,
       chapter, term: entry.term, full: entry.full, meaning: entry.meaning,
       line: detail,
-      translation: `${entry.term}: ${entry.meaning}`,
+      translation: `최신 참모 보고에 ${entry.term}이(가) 등장했다. 정확한 정의를 확인하고 계속하라.`,
       ask, options, correct,
       hint: `${entry.term}의 핵심은 “${entry.full}”이야. 문맥에서는 ${entry.meaning}(으)로 사용해.`,
       good: `“Correct. ${entry.term}, ${entry.full}.”`,
@@ -108,7 +109,8 @@ const lesson2Questions = [
 
 export const lessonTwo = {
   id:'lesson-2',number:2,available:true,titleKo:'브리핑 약어와 무전 절차어',titleEn:'BRIEFINGS · PROWORDS',
-  description:`브리핑 12개 · Prowords 24개 · 총 ${lesson2Questions.length}문항`,footer:'2차시 · Briefings & Prowords',
+  description:`총 ${lesson2Questions.length}문항 문제은행에서 매회 15문항 랜덤 도전`,footer:'2차시 · Briefings & Prowords',
+  classroomQuestionLimit:15,
   chapters:lesson2Chapters,questions:lesson2Questions,
   drills:[...makeDrills(lesson2Briefing,0,'l2b',8),...makeDrills(lesson2Prowords.slice(0,8),1,'l2p1',8),...makeDrills(lesson2Prowords.slice(8,16),2,'l2p2',8)],
   sourceNote:'강의 슬라이드 「Military Terms and Abbreviations 2」와 2차시 생도용 학습지를 기준으로 구성했습니다.'
@@ -209,7 +211,8 @@ const lesson4Questions = [
 
 export const lessonFour = {
   id:'lesson-4',number:4,available:true,titleKo:'작전약어와 참모조직',titleEn:'ABBREVIATIONS · STAFF',
-  description:`자주 쓰는 약어·참모부호·지휘부 직책 총 ${lesson4Questions.length}문항`,footer:'4차시 · Abbreviations & Staff Organization',
+  description:`총 ${lesson4Questions.length}문항 문제은행에서 매회 15문항 랜덤 도전`,footer:'4차시 · Abbreviations & Staff Organization',
+  classroomQuestionLimit:15,
   chapters:lesson4Chapters,questions:lesson4Questions,
   drills:[...makeDrills(lesson4Common,0,'l4a',9),...makeDrills(lesson4Staff,1,'l4s',6),...makeDrills(lesson4Leaders,2,'l4l',6)],
   sourceNote:'강의 슬라이드 「Military Terms and Abbreviations 4」와 4차시 생도용 학습지를 기준으로 구성했습니다.'

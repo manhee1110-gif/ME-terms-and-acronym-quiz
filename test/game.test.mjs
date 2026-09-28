@@ -23,19 +23,33 @@ test('every lesson question has complete and valid game data',()=>{
  }
 });
 
+test('a classroom prompt never prints its correct option before selection',()=>{
+ const normalize=value=>String(value).toLowerCase().replace(/[^a-z0-9가-힣]+/g,' ').trim();
+ for(const lesson of lessons){
+  for(const q of lesson.questions){
+   const answer=normalize(q.options[q.correct]);
+   if(answer.length<3) continue;
+   for(const field of ['line','translation','ask']){
+    assert.equal(normalize(q[field]).includes(answer),false,`${lesson.id}:${q.id}:${field} reveals ${q.options[q.correct]}`);
+   }
+  }
+ }
+});
+
 test('lesson one keeps the finalized terms, phonetics, and numbers structure',()=>{
  assert.equal(questions.length,24); assert.equal(chapters.length,3); assert.equal(drills.length,16);
  assert.deepEqual(chapters.map((_,i)=>questions.filter(q=>q.chapter===i).length),[12,6,6]);
 });
 
-test('lesson three draws a balanced random set of fifteen classroom questions',()=>{
- const lesson=lessons[2];
- const first=drawQuestionIds(lesson,()=>0.1),second=drawQuestionIds(lesson,()=>0.9);
- assert.equal(first.length,15); assert.equal(new Set(first).size,15);
- assert.equal(second.length,15); assert.notDeepEqual(first,second);
- for(const ids of [first,second]){
-  const picked=lesson.questions.filter(q=>ids.includes(q.id));
-  assert.deepEqual([0,1,2].map(chapter=>picked.filter(q=>q.chapter===chapter).length),[5,5,5]);
+test('all lessons draw balanced random sets of fifteen classroom questions',()=>{
+ for(const lesson of lessons){
+  const first=drawQuestionIds(lesson,()=>0.1),second=drawQuestionIds(lesson,()=>0.9);
+  assert.equal(first.length,15); assert.equal(new Set(first).size,15);
+  assert.equal(second.length,15); assert.notDeepEqual(first,second);
+  for(const ids of [first,second]){
+   const picked=lesson.questions.filter(q=>ids.includes(q.id));
+   assert.deepEqual([0,1,2].map(chapter=>picked.filter(q=>q.chapter===chapter).length),[5,5,5]);
+  }
  }
 });
 
