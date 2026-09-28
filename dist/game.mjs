@@ -1,4 +1,4 @@
-import {lessons, defaultLessonId, getLesson} from './lessons.mjs?v=9';
+import {lessons, defaultLessonId, getLesson} from './lessons.mjs?v=11';
 
 export {lessons, defaultLessonId};
 
@@ -17,17 +17,45 @@ export function chaptersFor(state) {
 }
 
 export function questionsFor(state) {
-  return currentLesson(state).questions;
+  const all = currentLesson(state).questions;
+  if (!state?.questionIds?.length) return all;
+  const selected = new Set(state.questionIds);
+  return all.filter(question => selected.has(question.id));
 }
 
 export function drillsFor(state) {
   return currentLesson(state).drills;
 }
 
-export function freshState(lessonId = defaultLessonId) {
+function shuffled(items, random = Math.random) {
+  const copy = [...items];
+  for (let index = copy.length - 1; index > 0; index -= 1) {
+    const swap = Math.floor(random() * (index + 1));
+    [copy[index], copy[swap]] = [copy[swap], copy[index]];
+  }
+  return copy;
+}
+
+export function drawQuestionIds(lesson, random = Math.random) {
+  const limit = lesson.classroomQuestionLimit;
+  if (!limit || lesson.questions.length <= limit) return lesson.questions.map(question => question.id);
+  const base = Math.floor(limit / lesson.chapters.length);
+  let remainder = limit % lesson.chapters.length;
+  const selected = new Set();
+  lesson.chapters.forEach((_, chapter) => {
+    const quota = base + (remainder-- > 0 ? 1 : 0);
+    shuffled(lesson.questions.filter(question => question.chapter === chapter), random)
+      .slice(0, quota)
+      .forEach(question => selected.add(question.id));
+  });
+  return lesson.questions.filter(question => selected.has(question.id)).map(question => question.id);
+}
+
+export function freshState(lessonId = defaultLessonId, questionIds) {
   const lesson = getLesson(lessonId);
   return {
     lessonId: lesson.id,
+    questionIds: questionIds || drawQuestionIds(lesson),
     phase: 'start', index: 0, misses: 0, firstTry: 0, tries: 0,
     selected: null, completed: 0, showTranslation: false,
     seen: [], wrongIds: []
@@ -42,7 +70,7 @@ export function current(state) {
 export function start(state) {
   const first = questionsFor(state)[0];
   if (!first) return state;
-  return {...freshState(state.lessonId), phase: 'question', seen: [first.id]};
+  return {...freshState(state.lessonId, state.questionIds), phase: 'question', seen: [first.id]};
 }
 
 export function choose(state, option) {

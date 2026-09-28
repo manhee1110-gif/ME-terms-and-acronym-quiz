@@ -2,7 +2,9 @@
 
 A static, lesson-selectable visual-novel game for Military English.
 
-## Current lesson
+## Current lessons
+
+All four lesson sets are available from the mission-select screen.
 
 Lesson 1 follows the finalized lecture slides and worksheet in three stages:
 
@@ -10,10 +12,14 @@ Lesson 1 follows the finalized lecture slides and worksheet in three stages:
 2. NATO phonetic alphabet encoding and decoding.
 3. Military numerical pronunciation, military time, and DTG.
 
+- **Lesson 2:** briefing terms and 24 radio procedure words.
+- **Lesson 3:** operational terms, service branches, Army branches, ranks, and unit echelons.
+- **Lesson 4:** frequently used operational abbreviations and U.S. Army staff organization.
+
 ## Two modes
 
-- **Classroom game:** Three fictional NPC encounters, 24 context-based questions, retry hints, and a mission-complete ending.
-- **Individual Comms Lab:** 16 browser-spoken activities combining dictation, code/number decoding, and one-sentence report writing.
+- **Classroom game:** Three fictional NPC encounters per lesson, context-based questions, retry hints, and a mission-complete ending.
+- **Individual Comms Lab:** Browser-spoken activities combining dictation, decoding, and one-sentence report writing.
 
 Dictation accepts capitalization, punctuation, hyphen, and article variants while preserving core spelling. Repeated attempts progressively reveal the listening focus, answer structure, and model answer. Writing prompts hide the target term until staged feedback is needed.
 

@@ -1,3 +1,5 @@
+import {lessonTwo, lessonThree, lessonFour} from './lessons-2-4.mjs?v=11';
+
 // Add future lessons here. A new lesson needs one data object and
 // available:true; the shared game screens will render it automatically.
 const question = (id, chapter, term, full, meaning, line, translation, ask, options, correct, hint, good, bad) => ({
@@ -326,14 +328,7 @@ const lessonOne = {
   sourceNote: '최종 강의 슬라이드 「Military Terms and Abbreviations (1)」과 1차시 학습지를 기준으로 구성했습니다. 상황과 등장인물은 학습용 가상 설정입니다.'
 };
 
-const comingSoon = number => ({
-  id: `lesson-${number}`, number, available: false,
-  titleKo: `${number}차시 단어 임무`, titleEn: 'COMING SOON',
-  description: '최종 단어 목록 추가 예정', footer: `${number}차시 · 준비 중`,
-  chapters: [], questions: [], drills: []
-});
-
-export const lessons = [lessonOne, comingSoon(2), comingSoon(3), comingSoon(4)];
+export const lessons = [lessonOne, lessonTwo, lessonThree, lessonFour];
 export const defaultLessonId = lessonOne.id;
 
 export function getLesson(id = defaultLessonId) {

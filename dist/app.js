@@ -1,10 +1,10 @@
 import {
   lessons, defaultLessonId, freshState, currentLesson, chaptersFor, questionsFor,
   drillsFor, current, choose, advance, completionTime, endingLabel
-} from './game.mjs?v=9';
-import {MotionScene} from './motion.mjs?v=9';
-import {Typewriter} from './typewriter.mjs?v=9';
-import {isAcceptedDictation, normalizeDictation} from './dictation.mjs?v=9';
+} from './game.mjs?v=11';
+import {MotionScene} from './motion.mjs?v=11';
+import {Typewriter} from './typewriter.mjs?v=11';
+import {isAcceptedDictation, normalizeDictation} from './dictation.mjs?v=11';
 
 const initialUrl = new URL(location.href);
 const requestedLesson = lessons.find(item => item.id === initialUrl.searchParams.get('lesson') && item.available);
@@ -121,7 +121,10 @@ function updateShell() {
   const selecting = surface === 'game' && state.phase === 'start';
   edition.textContent = selecting ? 'MILITARY ENGLISH · MISSION SELECT' : `MILITARY ENGLISH · LESSON ${String(lesson.number).padStart(2, '0')}`;
   footerLesson.textContent = selecting ? '차시를 선택해 학습 임무를 시작하세요' : lesson.footer;
-  notebookIntro.textContent = `${lesson.number}차시에서 만날 ${lesson.questions.length}개 표현입니다. 막히면 잠깐 확인해도 괜찮아요.`;
+  const selectedCount = activeQuestions().length;
+  notebookIntro.textContent = lesson.classroomQuestionLimit && surface === 'game'
+    ? `${lesson.questions.length}개 문제은행에서 이번 판에 선택된 ${selectedCount}개 표현입니다.`
+    : `${lesson.number}차시에서 만날 ${lesson.questions.length}개 표현입니다. 막히면 잠깐 확인해도 괜찮아요.`;
 }
 
 function resetGame(lessonId = state.lessonId) {
